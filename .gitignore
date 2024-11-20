@@ -1,0 +1,62 @@
+# Fichiers spécifiques à Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Fichiers spécifiques à iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/.symlinks/
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/DerivedData/
+*.xcuserstate
+
+# Fichiers spécifiques à Android
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# Fichiers spécifiques au Web
+web/.dart_tool/
+web/build/
+
+# Fichiers spécifiques à macOS
+macos/Flutter/ephemeral/
+macos/.symlinks/
+macos/DerivedData/
+
+# Fichiers spécifiques à Windows
+windows/flutter/ephemeral/
+windows/.dart_tool/
+
+# Fichiers spécifiques à Linux
+linux/flutter/ephemeral/
+linux/.dart_tool/
+
+# Paramètres de Visual Studio Code
+.vscode/
+
+# Paramètres des IDE JetBrains
+.idea/
+*.iml
+
+# Paramètres d'IntelliJ/Android Studio
+*.ipr
+*.iws
+*.idea/
+
+# Fichiers générés
+*.log
+*.lock
+*.pyc
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+
+# Divers
+*.flutter-plugins
+*.flutter-plugins-dependencies
