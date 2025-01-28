@@ -84,3 +84,48 @@ Si la commande de création de projet fonctionne correctement, cela signifie que
    - Assurez-vous que Visual Studio Build Tools est correctement configuré. Si d'autres erreurs sont signalées, suivez les recommandations de Flutter pour les résoudre.
 
 ---
+
+### **6. Lancement du projet**
+
+Pour lancer le projet, vous avez deux options : utiliser un émulateur via Android Studio ou utiliser votre propre smartphone.
+
+#### **Première option : Utiliser l'émulateur**
+1. Lancez Android Studio, puis ouvrez le **Virtual Device Manager** via **More Actions** -> **Virtual Device Manager**.
+2. Sélectionnez l'appareil virtuel que vous souhaitez émuler.
+3. Lancez l'émulateur. Veuillez noter que l'émulation d'un appareil peut ralentir les performances de votre PC, en fonction de la configuration de votre machine.
+
+#### **Deuxième option : Utiliser votre propre appareil**
+1. Activez le **mode développeur** sur votre téléphone :
+   - Allez dans **Paramètres > À propos du téléphone > Numéro de build** et appuyez 7 fois pour activer le mode développeur.
+2. Activez le **débogage USB** dans les **Options pour les développeurs**.
+3. Connectez votre téléphone à votre PC via USB.
+4. Vérifiez que votre appareil est bien détecté en exécutant la commande suivante dans le terminal :
+   ```bash
+   flutter devices
+   ```
+   Si votre appareil apparaît, cela signifie qu'il est correctement configuré et prêt à l'emploi. Vous devrez peut-être installer ou mettre à jour certains pilotes pour que l'application fonctionne correctement sur votre téléphone.
+
+#### **Lancer le projet**
+1. **Pour l'émulateur** : Exécutez la commande suivante dans le terminal :
+   ```bash
+   flutter run
+   ```
+   L'application sera lancée directement sur l'émulateur.
+
+2. **Pour un appareil physique** :
+   - Récupérez l'ID de votre appareil en exécutant :
+     ```bash
+     flutter devices
+     ```
+   - Ensuite, lancez le projet avec cette commande :
+     ```bash
+     flutter run -d <id-de-votre-device>
+     ```
+
+Une fois l'application lancée, vous verrez une URL dans votre terminal, par exemple :
+```
+http://127.0.0.1:9100?uri=http://127.0.0.1:49700/HucHxB_t7Z8=/
+```
+Cette URL permet de démarrer l'application soit sur l'émulateur, soit sur votre smartphone.
+
+---
