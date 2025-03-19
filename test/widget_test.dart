@@ -8,8 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:leveling_mobile/home.dart';
-import 'package:leveling_mobile/login_register.dart';
+import 'package:leveling_mobile/pages/login_register.dart';
 import 'package:leveling_mobile/pages/home.dart';
 
 void main() {
