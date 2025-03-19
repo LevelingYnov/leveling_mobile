@@ -1,4 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Arrosage des Plantes',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: LoginRegisterPage(),
+    );
+  }
+}
 
 class LoginRegisterPage extends StatefulWidget {
   @override
@@ -6,33 +22,52 @@ class LoginRegisterPage extends StatefulWidget {
 }
 
 class _LoginRegisterPageState extends State<LoginRegisterPage> {
-  bool isLogin = true;
+  void _showForm(bool isLogin) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(isLogin ? "Se connecter" : "S'inscrire"),
+          content: isLogin ? _buildLoginForm() : _buildRegisterForm(),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 54, 59, 252),
       body: Center(
-        child: Container(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ToggleButtons(
-                isSelected: [isLogin, !isLogin],
-                onPressed: (index) {
-                  setState(() {
-                    isLogin = index == 0;
-                  });
-                },
-                children: [
-                  Padding(padding: EdgeInsets.all(8.0), child: Text("Se connecter")),
-                  Padding(padding: EdgeInsets.all(8.0), child: Text("S'inscrire")),
-                ],
-              ),
-              SizedBox(height: 20.0),
-              isLogin ? _buildLoginForm() : _buildRegisterForm(),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'lib/img/logo.svg',
+              height: 100,
+            ),
+            SizedBox(height: 20),
+            Text(
+              "Bienvenue",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () => _showForm(true),
+              child: Text("Se connecter"),
+            ),
+            ElevatedButton(
+              onPressed: () => _showForm(false),
+              child: Text("S'inscrire"),
+            ),
+          ],
         ),
       ),
     );
@@ -40,6 +75,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
 
   Widget _buildLoginForm() {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         TextField(
           decoration: InputDecoration(labelText: 'Email'),
@@ -59,6 +95,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
 
   Widget _buildRegisterForm() {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         TextField(
           decoration: InputDecoration(labelText: 'Nom'),
@@ -79,3 +116,4 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
     );
   }
 }
+
