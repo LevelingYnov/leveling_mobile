@@ -1,20 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/conteneur.dart'; // Importation des widgets séparés
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Leveling',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: HomePage(),
-    );
-  }
-}
-
 class HomePage extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
