@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../built/conteneur.dart'; // Importation des widgets séparés
+import '../widgets/conteneur.dart'; // Importation des widgets séparés
 
 class MyApp extends StatelessWidget {
   @override
