@@ -1,119 +1,157 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:leveling_mobile/services/auth_service.dart';
+import 'package:leveling_mobile/providers/user_provider.dart';
+import 'package:leveling_mobile/screens/delayed_animation.dart';
 
-class MyApp extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Arrosage des Plantes',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
+  _LoginPageState createState() => _LoginPageState();
+}
+class _LoginPageState extends State<LoginPage> {
+  bool _obscureText = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+ Future<void> _login() async {
+  if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Veuillez remplir tous les champs'),
+        backgroundColor: Colors.red,
       ),
-      home: LoginRegisterPage(),
+    );
+    return;
+  }
+
+  String result = await AuthService.login(
+    _emailController.text,
+    _passwordController.text,
+  );
+
+  if (result == 'Connexion réussie') {
+    await context.read<UserProvider>().loadUserData();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Connexion réussie !'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.pushReplacementNamed(context, '/home');
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 }
 
-class LoginRegisterPage extends StatefulWidget {
-  @override
-  _LoginRegisterPageState createState() => _LoginRegisterPageState();
-}
-
-class _LoginRegisterPageState extends State<LoginRegisterPage> {
-  void _showForm(bool isLogin) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(isLogin ? "Se connecter" : "S'inscrire"),
-          content: isLogin ? _buildLoginForm() : _buildRegisterForm(),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 54, 59, 252),
+      backgroundColor: Color.fromRGBO(54, 59, 252, 1),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'lib/img/logo.svg',
-              height: 100,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                DelayedAnimation(
+                  delay: 100,
+                  child: Image.asset(
+                    "lib/assets/logo.png",
+                    height: 100,
+                  ),
+                ),
+                SizedBox(height: 20),
+                DelayedAnimation(
+                  delay: 200,
+                  child: Text(
+                    "Connexion",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                DelayedAnimation(
+                  delay: 400,
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      hintText: "E-mail",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                DelayedAnimation(
+                  delay: 600,
+                  child: TextField(
+                    controller: _passwordController,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                      hintText: "Mot de passe",
+                      filled: true,
+                      fillColor: Colors.white,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                DelayedAnimation(
+                  delay: 800,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _login,
+                    child: Text("CONNEXION", style: TextStyle(fontSize: 12)),
+                  ),
+                ),
+                SizedBox(height: 30),
+                // DelayedAnimation(
+                //   delay: 1000,
+                //   child: Image.asset("assets/images/logo.svg", height: 80),
+                // ),
+                // SizedBox(height: 20),
+              ],
             ),
-            SizedBox(height: 20),
-            Text(
-              "Bienvenue",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-          ],
+          ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () => _showForm(true),
-              child: Text("Se connecter"),
-            ),
-            ElevatedButton(
-              onPressed: () => _showForm(false),
-              child: Text("S'inscrire"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoginForm() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          decoration: InputDecoration(labelText: 'Email'),
-        ),
-        TextField(
-          decoration: InputDecoration(labelText: 'Mot de passe'),
-          obscureText: true,
-        ),
-        SizedBox(height: 20.0),
-        ElevatedButton(
-          onPressed: () {},
-          child: Text("Se connecter"),
-        )
-      ],
-    );
-  }
-
-  Widget _buildRegisterForm() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          decoration: InputDecoration(labelText: 'Nom'),
-        ),
-        TextField(
-          decoration: InputDecoration(labelText: 'Email'),
-        ),
-        TextField(
-          decoration: InputDecoration(labelText: 'Mot de passe'),
-          obscureText: true,
-        ),
-        SizedBox(height: 20.0),
-        ElevatedButton(
-          onPressed: () {},
-          child: Text("S'inscrire"),
-        )
-      ],
     );
   }
 }
-

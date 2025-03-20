@@ -14,7 +14,7 @@ class _HomeState extends State<HomePage> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'lib/img/leveling_fond1.png',
+              'lib/assets/leveling_fond1.png',
               fit: BoxFit.cover,
             ),
           ),
