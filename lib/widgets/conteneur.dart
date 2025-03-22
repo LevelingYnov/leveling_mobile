@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // Pour utiliser BackdropFilter
+import 'package:leveling_mobile/providers/user_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-Widget buildHeader() {
+Widget buildHeader(BuildContext context) {
+  final userProvider = Provider.of<UserProvider>(context);
+
   return Center(
     child: ClipRRect(
       borderRadius: BorderRadius.circular(16),
@@ -29,16 +34,33 @@ Widget buildHeader() {
                 height: 51,
                 margin: EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: Colors.white,
                   shape: BoxShape.circle,
                 ),
+                child: userProvider.avatar != null
+                    ? ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: userProvider.avatar ?? '',
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) {
+                            print('Error loading image: $error'); // Ajoutez ce print pour déboguer
+                            return Icon(Icons.error, color: Colors.red);
+                          },
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                        ),
+                      )
+                    : Icon(
+                        Icons.person,
+                        size: 30,
+                        color: Colors.grey,
+                      ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Titre',
+                    userProvider.username ?? 'Nom d\'utilisateur',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -47,7 +69,7 @@ Widget buildHeader() {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Sous-texte descriptif ici.',
+                    '${userProvider.points ?? 0} points',
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 14,

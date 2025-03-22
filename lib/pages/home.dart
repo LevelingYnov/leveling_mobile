@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/conteneur.dart'; // Importation des widgets séparés
+import 'package:provider/provider.dart';
+import 'package:leveling_mobile/providers/user_provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,6 +9,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeState extends State<HomePage> {
+
+// @override
+// void initState() {
+//   super.initState();
+//   final userProvider = Provider.of<UserProvider>(context, listen: false);
+//   userProvider.loadUserData();
+// }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +39,7 @@ class _HomeState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                buildHeader(),
+                buildHeader(context),
                 SizedBox(height: 20),
                 buildMainContainer(),
               ],

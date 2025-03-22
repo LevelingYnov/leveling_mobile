@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthService {
-  static const String _apiUrl = 'http://10.69.2.197:5000/api/auth/login';
+  static const String _apiUrl = 'http://localhost:5000/api/auth/login';
 
   static Future<String> login(String identifier, String password) async {
     final response = await http.post(
@@ -36,7 +36,13 @@ class AuthService {
 
   static Future<Map<String, dynamic>?> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // // Supprimer le token pour tester
+    // await prefs.remove('jwt_token'); // Cela supprime temporairement le token
+
+    // Récupérer le token supprimé (sera null maintenant)
     String? token = prefs.getString('jwt_token');
+    print("Token récupéré après suppression: $token");
 
     if (token != null) {
       try {
@@ -72,7 +78,8 @@ class AuthService {
 
         if (decodedToken.containsKey('exp')) {
           int expirationTime = decodedToken['exp'];
-          DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(expirationTime * 1000);
+          DateTime expirationDate =
+              DateTime.fromMillisecondsSinceEpoch(expirationTime * 1000);
 
           if (expirationDate.isBefore(DateTime.now())) {
             return false;
