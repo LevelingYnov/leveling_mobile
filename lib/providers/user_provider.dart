@@ -6,6 +6,7 @@ class UserProvider with ChangeNotifier {
   String? role;
   String? avatar;
   int? points;
+  int? userId;
 
   Future<void> loadUserData() async {
     if (username != null && role != null && avatar != null && points != null) return;
@@ -18,8 +19,9 @@ class UserProvider with ChangeNotifier {
       role = userData['userRole'];
       avatar = userData['avatar'];
       points = userData['points'];
+      userId = userData['userId'];
 
-      print("Utilisateur chargé: $username, Role: $role, Avatar: $avatar, Points: $points");
+      print("Utilisateur chargé: $username, Role: $role, Avatar: $avatar, Points: $points, ID: $userId");
 
       notifyListeners();
     } else {
@@ -32,6 +34,7 @@ class UserProvider with ChangeNotifier {
     role = null;
     avatar = null;
     points = null;
+    userId = null;
     notifyListeners();
   }
 }

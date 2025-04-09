@@ -8,49 +8,53 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
- Future<void> _login() async {
-  if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Veuillez remplir tous les champs'),
-        backgroundColor: Colors.red,
-      ),
+  Future<void> _login() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Veuillez remplir tous les champs'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    String result = await AuthService.login(
+      _emailController.text,
+      _passwordController.text,
     );
-    return;
+
+    if (result == 'Connexion réussie') {
+      await context.read<UserProvider>().loadUserData();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Connexion réussie !'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
-  String result = await AuthService.login(
-    _emailController.text,
-    _passwordController.text,
-  );
-
-  if (result == 'Connexion réussie') {
-    await context.read<UserProvider>().loadUserData();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Connexion réussie !'),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    Navigator.popUntil(context, (route) => route.isFirst);
-    Navigator.pushReplacementNamed(context, '/home');
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(result),
-        backgroundColor: Colors.red,
-      ),
-    );
+  void _navigateToRegister() {
+    Navigator.pushNamed(context, '/register');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +143,22 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     onPressed: _login,
                     child: Text("CONNEXION", style: TextStyle(fontSize: 12)),
+                  ),
+                ),
+                SizedBox(height: 20),
+                DelayedAnimation(
+                  delay: 1000,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _navigateToRegister,
+                    child: Text("REGISTER", style: TextStyle(fontSize: 12)),
                   ),
                 ),
                 SizedBox(height: 30),

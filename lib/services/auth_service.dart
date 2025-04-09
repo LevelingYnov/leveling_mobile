@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthService {
-  static const String _apiUrl = 'http://localhost:5000/api/auth/login';
+  static const String _apiUrl = 'http://localhost:5000/api/auth';
 
   static Future<String> login(String identifier, String password) async {
     final response = await http.post(
-      Uri.parse(_apiUrl),
+      Uri.parse('$_apiUrl/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'identifier': identifier.trim(),
@@ -17,12 +17,37 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final String token = data['accessToken']; // Correction ici
+      final String token = data['accessToken'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('jwt_token', token);
 
       return 'Connexion réussie';
+    } else {
+      final errorData = jsonDecode(response.body);
+      return errorData['message'] ?? 'Erreur inconnue';
+    }
+  }
+
+  static Future<String> register(String username, String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$_apiUrl/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': username.trim(),
+        'email': email.trim(),
+        'password': password.trim(),
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final data = jsonDecode(response.body);
+      final String token = data['accessToken'];
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', token);
+
+      return 'Inscription réussie';
     } else {
       final errorData = jsonDecode(response.body);
       return errorData['message'] ?? 'Erreur inconnue';
@@ -36,13 +61,7 @@ class AuthService {
 
   static Future<Map<String, dynamic>?> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // // Supprimer le token pour tester
-    // await prefs.remove('jwt_token'); // Cela supprime temporairement le token
-
-    // Récupérer le token supprimé (sera null maintenant)
     String? token = prefs.getString('jwt_token');
-    print("Token récupéré après suppression: $token");
 
     if (token != null) {
       try {

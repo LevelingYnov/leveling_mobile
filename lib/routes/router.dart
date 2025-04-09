@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:leveling_mobile/pages/home.dart';
-import 'package:leveling_mobile/pages/login_register.dart';
+import 'package:leveling_mobile/pages/login.dart';
 import 'package:leveling_mobile/services/auth_service.dart';
 import 'package:leveling_mobile/providers/user_provider.dart';
+import 'package:leveling_mobile/providers/event_provider.dart';
 import 'package:provider/provider.dart';
 
 class AppRouter {

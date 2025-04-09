@@ -41,7 +41,7 @@ class _HomeState extends State<HomePage> {
               children: [
                 buildHeader(context),
                 SizedBox(height: 20),
-                buildMainContainer(),
+                buildMainContainer(context),
               ],
             ),
           ),

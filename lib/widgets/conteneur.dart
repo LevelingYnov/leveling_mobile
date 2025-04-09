@@ -85,7 +85,9 @@ Widget buildHeader(BuildContext context) {
   );
 }
 
-Widget buildMainContainer() {
+Widget buildMainContainer(BuildContext context) {
+  // final timerService = Provider.of<TimerService>(context, listen: false); // Assurez-vous que TimerService est fourni dans le contexte
+  
   return Center(
     child: ClipRRect(
       borderRadius: BorderRadius.circular(16),
@@ -110,7 +112,7 @@ Widget buildMainContainer() {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Titre Principal',
+                'Quêtes journalières',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -119,17 +121,17 @@ Widget buildMainContainer() {
               ),
               SizedBox(height: 8),
               Text(
-                'Sous-titre descriptif.',
+                'La voie vers la puissance',
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 16,
                 ),
               ),
               SizedBox(height: 20),
-              buildSubContainer(),
+              //buildTimeContainer(timerService),
               SizedBox(height: 20),
               Text(
-                'Deuxième sous-titre.',
+                'Attention : Un échec entrainera une punition liée à cette quête',
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 16,
@@ -164,6 +166,67 @@ Widget buildMainContainer() {
     ),
   );
 }
+
+
+// Widget buildTimeContainer(TimerService timerService) {
+//   return ValueListenableBuilder<Duration>(
+//     valueListenable: timerService.remainingNotifier,
+//     builder: (context, remaining, child) {
+//       return Container(
+//         width: double.infinity,
+//         height: 100,
+//         padding: const EdgeInsets.all(16),
+//         decoration: BoxDecoration(
+//           color: Colors.blueAccent,
+//           borderRadius: BorderRadius.circular(16),
+//         ),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             const Text(
+//               'Temps restant',
+//               style: TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 18,
+//                 fontWeight: FontWeight.bold,
+//               ),
+//             ),
+//             const SizedBox(height: 10),
+//             Text(
+//               format(remaining),
+//               style: const TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 24,
+//                 fontWeight: FontWeight.w600,
+//               ),
+//             ),
+//             const SizedBox(height: 10),
+//             LinearProgressIndicator(
+//               value: 1.0 - (remaining.inSeconds / timerService.total.inSeconds),
+//               backgroundColor: Colors.white24,
+//               valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+//               minHeight: 8,
+//             ),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Widget buildSubContainer() {
   return Container(
