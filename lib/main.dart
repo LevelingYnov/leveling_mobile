@@ -1,41 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:leveling_mobile/providers/user_provider.dart';
-import 'package:leveling_mobile/routes/router.dart';
-import 'package:leveling_mobile/services/api_service.dart';
 import 'package:leveling_mobile/providers/event_provider.dart';
-void main() async {
-  await dotenv.load();
-  final apiService = ApiService();
+import 'package:leveling_mobile/services/auth_service.dart';
+import 'package:leveling_mobile/providers/user_provider.dart';
+import 'package:leveling_mobile/routes/router.dart'; // Fichier contenant generateRoute
+import 'package:leveling_mobile/pages/login.dart';
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => EventProvider(apiService: apiService)),
-      ],
-      child: MyApp(),
-    ),
-  );
+void main() {
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+  AppRouter router = AppRouter(); // Instance de notre générateur de routes
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Leveling',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Color.fromARGB(255, 30, 30, 30),
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Color(0x0092FDFF),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        // Autres providers si nécessaire
+      ],
+      child: MaterialApp(
+        title: 'Leveling Mobile',
+        theme: ThemeData(
+          // Configuration du thème
+          primaryColor: Color.fromRGBO(54, 59, 252, 1),
+          scaffoldBackgroundColor: Colors.white,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: AppRouter().generateRoute,// Utiliser notre générateur de routes
+        navigatorObservers: [
+          // Observateur de navigation pour le débogage
+          RouteObserver(),
+        ],
       ),
-      onGenerateRoute: AppRouter.generateRoute,
     );
+  }
+}
+
+// Observateur personnalisé pour le débogage des routes
+class RouteObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigation PUSH: ${route.settings.name} (précédent: ${previousRoute?.settings.name})');
+    super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigation POP: ${route.settings.name} (maintenant: ${previousRoute?.settings.name})');
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    print('Navigation REPLACE: ${oldRoute?.settings.name} par ${newRoute?.settings.name}');
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigation REMOVE: ${route.settings.name}');
+    super.didRemove(route, previousRoute);
   }
 }

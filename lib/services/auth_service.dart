@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:leveling_mobile/providers/user_provider.dart';
 
 class AuthService {
   static const String _apiUrl = 'http://localhost:5000/api/auth';
@@ -29,7 +31,98 @@ class AuthService {
     }
   }
 
-  static Future<String> register(String username, String email, String password) async {
+  static Future<bool> refreshToken() async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_apiUrl/refreshToken'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final String newToken = data['token'];
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', newToken);
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Erreur lors du rafraîchissement du token: $e');
+      return false;
+    }
+  }
+
+  static Future<String> checkAndRefreshToken() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null) {
+        return 'Token non trouvé';
+      }
+
+      final testResponse = await http.get(
+        Uri.parse('$_apiUrl/user/profile'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (testResponse.statusCode == 401) {
+        final refreshSuccess = await refreshToken();
+
+        if (refreshSuccess) {
+          return 'Token rafraîchi avec succès';
+        } else {
+          return 'Session expirée, veuillez vous reconnecter';
+        }
+      }
+
+      return 'Token valide';
+    } catch (e) {
+      print('Erreur lors de la vérification du token: $e');
+      return 'Erreur lors de la vérification du token';
+    }
+  }
+
+  static Future<Map<String, dynamic>> handleAuthentication(
+      String identifier, String password) async {
+    final loginResult = await login(identifier, password);
+
+    return {
+      'success': loginResult == 'Connexion réussie',
+      'message': loginResult,
+    };
+  }
+
+  static Future<Map<String, dynamic>> checkAuthentication() async {
+    final result = await checkAndRefreshToken();
+
+    if (result == 'Token valide' || result == 'Token rafraîchi avec succès') {
+      return {
+        'isAuthenticated': true,
+        'message': result,
+      };
+    } else if (result == 'Session expirée, veuillez vous reconnecter') {
+      return {
+        'isAuthenticated': false,
+        'requireLogin': true,
+        'message': result,
+      };
+    } else {
+      return {
+        'isAuthenticated': false,
+        'message': result,
+      };
+    }
+  }
+
+  static Future<String> register(
+      String username, String email, String password) async {
     final response = await http.post(
       Uri.parse('$_apiUrl/register'),
       headers: {'Content-Type': 'application/json'},
@@ -54,9 +147,14 @@ class AuthService {
     }
   }
 
-  static Future<void> logout() async {
+  static Future<void> logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('jwt_token');
+    UserProvider userProvider = UserProvider();
+    userProvider.clearUserData();
+    await Future.delayed(Duration(milliseconds: 100));
+
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   static Future<Map<String, dynamic>?> getUserData() async {
@@ -100,13 +198,10 @@ class AuthService {
           DateTime expirationDate =
               DateTime.fromMillisecondsSinceEpoch(expirationTime * 1000);
 
-          if (expirationDate.isBefore(DateTime.now())) {
-            return false;
-          }
-
-          return true;
+          return expirationDate.isAfter(DateTime.now());
         }
       } catch (e) {
+        print("Erreur lors de la vérification du token: $e");
         return false;
       }
     }

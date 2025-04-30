@@ -14,14 +14,11 @@ class UserProvider with ChangeNotifier {
     var userData = await AuthService.getUserData();
 
     if (userData != null) {
-      print(userData);
       username = userData['username'];
       role = userData['userRole'];
       avatar = userData['avatar'];
       points = userData['points'];
       userId = userData['userId'];
-
-      print("Utilisateur chargé: $username, Role: $role, Avatar: $avatar, Points: $points, ID: $userId");
 
       notifyListeners();
     } else {
@@ -29,7 +26,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  void clearUser() {
+  void clearUserData() {
     username = null;
     role = null;
     avatar = null;
