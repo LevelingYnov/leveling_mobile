@@ -3,10 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:leveling_mobile/providers/event_provider.dart';
 import 'package:leveling_mobile/services/auth_service.dart';
 import 'package:leveling_mobile/providers/user_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:leveling_mobile/routes/router.dart'; // Fichier contenant generateRoute
 import 'package:leveling_mobile/pages/login.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env"); // important si tu utilises flutter_dotenv
   runApp(MyApp());
 }
 

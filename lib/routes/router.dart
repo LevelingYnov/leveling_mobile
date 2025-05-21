@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:leveling_mobile/pages/home.dart';
 import 'package:leveling_mobile/pages/login.dart';
 import 'package:leveling_mobile/pages/register.dart';
-import 'package:leveling_mobile/services/auth_service.dart';
-import 'package:leveling_mobile/providers/user_provider.dart';
-import 'package:leveling_mobile/providers/event_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:leveling_mobile/pages/mission_page.dart';
 
 class AppRouter {
   Route<dynamic> generateRoute(RouteSettings settings) {
@@ -25,6 +22,9 @@ class AppRouter {
 
       case '/register':
         return MaterialPageRoute(builder: (_) => RegisterPage());
+
+      case '/mission':
+        return MaterialPageRoute(builder: (_) => MissionPage());
 
       default:
         return MaterialPageRoute(

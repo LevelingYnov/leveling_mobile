@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Fonction pour obtenir un IOClient sécurisé
 HttpClient getHttpClient() {
   HttpClient httpClient = HttpClient();
-    httpClient.badCertificateCallback = (cert, host, port) => true;
+  httpClient.badCertificateCallback = (cert, host, port) => true;
   return httpClient;
 }
 
@@ -28,11 +28,8 @@ class ApiService {
   }
 
   // Méthode générique pour gérer GET, POST, PUT, DELETE
-  Future<http.Response> request(
-    String method,
-    String endpoint,
-    {Map<String, dynamic>? body}
-  ) async {
+  Future<http.Response> request(String method, String endpoint,
+      {Map<String, dynamic>? body}) async {
     final token = await _getToken();
     final uri = Uri.parse('$baseUrl$endpoint');
     final headers = {
@@ -44,13 +41,16 @@ class ApiService {
       http.Response response;
       switch (method.toUpperCase()) {
         case 'GET':
-          response = await client.get(uri, headers: headers); // Utilisation du client sécurisé
+          response = await client.get(uri,
+              headers: headers); // Utilisation du client sécurisé
           break;
         case 'POST':
-          response = await client.post(uri, headers: headers, body: jsonEncode(body));
+          response =
+              await client.post(uri, headers: headers, body: jsonEncode(body));
           break;
         case 'PUT':
-          response = await client.put(uri, headers: headers, body: jsonEncode(body));
+          response =
+              await client.put(uri, headers: headers, body: jsonEncode(body));
           break;
         case 'DELETE':
           response = await client.delete(uri, headers: headers);
@@ -69,13 +69,21 @@ class ApiService {
   // Gestion des erreurs
   void _handleErrors(http.Response response) {
     if (response.statusCode >= 400) {
+      String errorMessage = 'Erreur inconnue';
+
       try {
         final errorData = jsonDecode(response.body);
-        final errorMessage = errorData['message'] ?? 'Erreur inconnue';
-        throw Exception('❌ ${response.statusCode} : $errorMessage');
+        if (errorData is Map && errorData.containsKey('message')) {
+          errorMessage = errorData['message'];
+        } else {
+          errorMessage = response.reasonPhrase ?? 'Erreur';
+        }
       } catch (e) {
-        throw Exception('❌ ${response.statusCode} : ${response.reasonPhrase}');
+        // Pas un JSON ou autre erreur
+        errorMessage = response.reasonPhrase ?? 'Erreur';
       }
+
+      throw Exception('❌ ${response.statusCode} : $errorMessage');
     }
   }
 }
